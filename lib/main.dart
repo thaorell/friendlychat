@@ -73,32 +73,31 @@ class ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
 
   Widget _buildTextComposer() {
     //this is for the text box and the button
-    return new IconTheme(
-        //this theme will apply to anything below
-        data: new IconThemeData(color: new Color.fromARGB(255, 67, 164, 121)),
-        child: new Container(
-            //margin is 15 because iphone XR actually has the weird curvy part of the screen
-            margin: const EdgeInsets.symmetric(horizontal: 15.0),
-            child: new Row(children: <Widget>[
-              new Flexible(
-                  child: new TextField(
-                controller: _textController,
-                onSubmitted: _handleSubmitted,
-                decoration:
-                    new InputDecoration.collapsed(hintText: "Send a message"),
-              )),
-              new Container(
-                  margin: new EdgeInsets.symmetric(horizontal: 4.0),
-                  child: Theme.of(context).platform == TargetPlatform.iOS
-                      ? new CupertinoButton(
-                          child: new Text("Send"),
-                          onPressed: () =>
-                              _handleSubmitted(_textController.text))
-                      : new IconButton(
-                          icon: new Icon(Icons.send),
-                          onPressed: () =>
-                              _handleSubmitted(_textController.text)))
-            ])));
+//    return new IconTheme(
+    //this theme will apply to anything below
+//        data: new IconThemeData(color: new Color.fromARGB(255, 67, 164, 121)),
+    child:
+    return new Container(
+        //margin is 15 because iphone XR actually has the weird curvy part of the screen
+        margin: const EdgeInsets.symmetric(horizontal: 15.0),
+        child: new Row(children: <Widget>[
+          new Flexible(
+              child: new TextField(
+            controller: _textController,
+            onSubmitted: _handleSubmitted,
+            decoration:
+                new InputDecoration.collapsed(hintText: "Send a message"),
+          )),
+          new Container(
+              margin: new EdgeInsets.symmetric(horizontal: 4.0),
+              child: Theme.of(context).platform == TargetPlatform.iOS
+                  ? new CupertinoButton(
+                      child: new Text("Send"),
+                      onPressed: () => _handleSubmitted(_textController.text))
+                  : new IconButton(
+                      icon: new Icon(Icons.send),
+                      onPressed: () => _handleSubmitted(_textController.text)))
+        ]));
   }
 
   void _handleSubmitted(String text) {
