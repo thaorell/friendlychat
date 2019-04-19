@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/cupertino.dart';
 
 void main() {
   runApp(new FriendlychatApp());
@@ -11,6 +13,8 @@ class FriendlychatApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return new MaterialApp(
       title: "Friendlychat",
+      theme:
+          defaultTargetPlatform == TargetPlatform.iOS ? iOSTheme : androidTheme,
       home: new ChatScreen(),
     );
   }
@@ -40,28 +44,30 @@ class ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
         title: new Text(
           "Friendlychat",
         ),
-        backgroundColor: new Color.fromARGB(255, 170, 240, 209),
+        elevation: Theme.of(context).platform == TargetPlatform.iOS ? 0.0 : 4.0,
       ),
-      body: new Column(children: <Widget>[
-        //flexible widgets just expand all along any axis
-        new Flexible(
-            //displaying all the messages as a listview
-            child: new ListView.builder(
-          padding: new EdgeInsets.all(8.0),
-          reverse:
-              true, //reverse means that the latest item is actually in the bottom
-          itemBuilder: (_, int index) => messages[index],
-          itemCount: messages.length,
-        )),
-        // just a gap
-        new Divider(height: 1.0),
-        //the bottom will be the text box with the send button
-        new Container(
-          decoration:
-              new BoxDecoration(color: new Color.fromARGB(100, 239, 237, 236)),
-          child: _buildTextComposer(),
-        ),
-      ]),
+      body: Container(
+        child: new Column(children: <Widget>[
+          //flexible widgets just expand all along any axis
+          new Flexible(
+              //displaying all the messages as a listview
+              child: new ListView.builder(
+            padding: new EdgeInsets.all(8.0),
+            reverse:
+                true, //reverse means that the latest item is actually in the bottom
+            itemBuilder: (_, int index) => messages[index],
+            itemCount: messages.length,
+          )),
+          // just a gap
+          new Divider(height: 1.0),
+          //the bottom will be the text box with the send button
+          new Container(
+            decoration: new BoxDecoration(
+                color: new Color.fromARGB(100, 239, 237, 236)),
+            child: _buildTextComposer(),
+          ),
+        ]),
+      ),
     );
   }
 
@@ -83,9 +89,15 @@ class ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
               )),
               new Container(
                   margin: new EdgeInsets.symmetric(horizontal: 4.0),
-                  child: new IconButton(
-                      icon: new Icon(Icons.send),
-                      onPressed: () => _handleSubmitted(_textController.text)))
+                  child: Theme.of(context).platform == TargetPlatform.iOS
+                      ? new CupertinoButton(
+                          child: new Text("Send"),
+                          onPressed: () =>
+                              _handleSubmitted(_textController.text))
+                      : new IconButton(
+                          icon: new Icon(Icons.send),
+                          onPressed: () =>
+                              _handleSubmitted(_textController.text)))
             ])));
   }
 
@@ -130,17 +142,30 @@ class ChatMessage extends StatelessWidget {
                     //Circle Avatar: Avatar in iOS contacts
                     child: new CircleAvatar(child: new Text(_name[0])),
                   ),
-                  new Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        //Name of user and using the default Flutter theme
-                        new Text(_name,
-                            style: Theme.of(context).textTheme.subhead),
-                        new Container(
-                          margin: const EdgeInsets.only(top: 5.0),
-                          child: new Text(text),
-                        )
-                      ])
+                  new Expanded(
+                    child: new Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          //Name of user and using the default Flutter theme
+                          new Text(_name,
+                              style: Theme.of(context).textTheme.subhead),
+                          new Container(
+                            margin: const EdgeInsets.only(top: 5.0),
+                            child: new Text(text),
+                          )
+                        ]),
+                  )
                 ])));
   }
 }
+
+final ThemeData iOSTheme = new ThemeData(
+  primarySwatch: Colors.lightGreen,
+  primaryColor: Colors.lightGreen,
+  primaryColorBrightness: Brightness.light,
+);
+
+final ThemeData androidTheme = new ThemeData(
+  primarySwatch: Colors.amber,
+  accentColor: Colors.orangeAccent,
+);
