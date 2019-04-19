@@ -26,6 +26,14 @@ class ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
   final List<ChatMessage> messages = <ChatMessage>[];
   final TextEditingController _textController = new TextEditingController();
   @override
+  void dispose() {
+    // dispose any unused animation because
+    // u only need the animation for the latest text
+    for (ChatMessage message in messages) message.animationController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return new Scaffold(
       appBar: new AppBar(
