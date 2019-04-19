@@ -34,16 +34,22 @@ class ChatScreenState extends State<ChatScreen> {
         backgroundColor: new Color.fromARGB(255, 170, 240, 209),
       ),
       body: new Column(children: <Widget>[
+        //flexible widgets just expand all along any axis
         new Flexible(
+            //displaying all the messages as a listview
             child: new ListView.builder(
           padding: new EdgeInsets.all(8.0),
-          reverse: true,
+          reverse:
+              true, //reverse means that the latest item is actually in the bottom
           itemBuilder: (_, int index) => messages[index],
           itemCount: messages.length,
         )),
+        // just a gap
         new Divider(height: 1.0),
+        //the bottom will be the text box with the send button
         new Container(
-          decoration: new BoxDecoration(color: Theme.of(context).cardColor),
+          decoration:
+              new BoxDecoration(color: new Color.fromARGB(100, 239, 237, 236)),
           child: _buildTextComposer(),
         ),
       ]),
@@ -51,10 +57,13 @@ class ChatScreenState extends State<ChatScreen> {
   }
 
   Widget _buildTextComposer() {
+    //this is for the text box and the button
     return new IconTheme(
-        data: new IconThemeData(color: Theme.of(context).accentColor),
+        //this theme will apply to anything below
+        data: new IconThemeData(color: new Color.fromARGB(255, 67, 164, 121)),
         child: new Container(
-            margin: const EdgeInsets.symmetric(horizontal: 8.0),
+            //margin is 15 because iphone XR actually has the weird curvy part of the screen
+            margin: const EdgeInsets.symmetric(horizontal: 15.0),
             child: new Row(children: <Widget>[
               new Flexible(
                   child: new TextField(
@@ -73,12 +82,14 @@ class ChatScreenState extends State<ChatScreen> {
 
   void _handleSubmitted(String text) {
     _textController.clear();
-    ChatMessage msg = new ChatMessage(
-      text: text,
-    );
-    setState(() {
-      messages.insert(0, msg);
-    });
+    if (text != "") {
+      ChatMessage msg = new ChatMessage(
+        text: text,
+      );
+      setState(() {
+        messages.insert(0, msg);
+      });
+    }
   }
 }
 
