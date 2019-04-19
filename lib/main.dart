@@ -21,7 +21,8 @@ class ChatScreen extends StatefulWidget {
   State createState() => new ChatScreenState();
 }
 
-class ChatScreenState extends State<ChatScreen> {
+class ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
+  //TickerProviderStateMixin ensures vsync
   final List<ChatMessage> messages = <ChatMessage>[];
   final TextEditingController _textController = new TextEditingController();
   @override
@@ -85,10 +86,13 @@ class ChatScreenState extends State<ChatScreen> {
     if (text != "") {
       ChatMessage msg = new ChatMessage(
         text: text,
+        animationController: new AnimationController(
+            duration: new Duration(milliseconds: 500), vsync: this),
       );
       setState(() {
         messages.insert(0, msg);
       });
+      msg.animationController.forward();
     }
   }
 }
@@ -97,30 +101,38 @@ class ChatMessage extends StatelessWidget {
   /*
   * How to display a message
   * */
-  ChatMessage({this.text});
+  ChatMessage({this.text, this.animationController});
   final String text;
+  final AnimationController animationController;
   @override
   Widget build(BuildContext context) {
-    return new Container(
-        margin: const EdgeInsets.symmetric(vertical: 10.0),
-        child: new Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              new Container(
-                margin: const EdgeInsets.only(right: 16.00),
-                //Circle Avatar: Avatar in iOS contacts
-                child: new CircleAvatar(child: new Text(_name[0])),
-              ),
-              new Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    //Name of user and using the default Flutter theme
-                    new Text(_name, style: Theme.of(context).textTheme.subhead),
-                    new Container(
-                      margin: const EdgeInsets.only(top: 5.0),
-                      child: new Text(text),
-                    )
-                  ])
-            ]));
+    return new SizeTransition(
+        sizeFactor: new CurvedAnimation(
+            //makes text popping up smoothly omg
+            parent: animationController,
+            curve: Curves.easeInOutCubic),
+        axisAlignment: 0.0,
+        child: new Container(
+            margin: const EdgeInsets.symmetric(vertical: 10.0),
+            child: new Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  new Container(
+                    margin: const EdgeInsets.only(right: 16.00),
+                    //Circle Avatar: Avatar in iOS contacts
+                    child: new CircleAvatar(child: new Text(_name[0])),
+                  ),
+                  new Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        //Name of user and using the default Flutter theme
+                        new Text(_name,
+                            style: Theme.of(context).textTheme.subhead),
+                        new Container(
+                          margin: const EdgeInsets.only(top: 5.0),
+                          child: new Text(text),
+                        )
+                      ])
+                ])));
   }
 }
